@@ -1,0 +1,25 @@
+local function get(url)
+    local req = (MachoWebRequest or syn.request or http.request or request)
+    if not req then error("HTTP not supported") end
+    local res = req("https://raw.githubusercontent.com/ia3xrtz/meow/main/keys.json")
+    return res
+end
+
+local function decodeJson(str)
+    local ok, res = pcall(function() return load("return " .. str)() end)
+    return ok and res or {}
+end
+
+local menuURL = "https://raw.githubusercontent.com/ia3xrtz/meow/main/menu.lua"
+
+print("Enter your key:")
+local key = io.read()
+
+local keys = decodeJson(get())
+if keys[key] then
+    print("Key valid. Loading menu...")
+    local script = MachoWebRequest(menuURL)
+    MachoIsolatedInject(script)
+else
+    print("Invalid key. Access denied.")
+end
